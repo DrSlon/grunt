@@ -1,0 +1,19 @@
+<full_page_cache>
+    <backend><%= full_page_cache.backend %></backend>
+    <backend_options>
+        <server><%= full_page_cache.server %></server>
+        <port><%= full_page_cache.port %></port>
+        <persistent><%= full_page_cache.persistent %></persistent>
+        <database><%= full_page_cache.database %></database>
+        <password><%= full_page_cache.password %></password>
+        <force_standalone><%= full_page_cache.force_standalone %></force_standalone>
+        <connect_retries><%= full_page_cache.connect_retries %></connect_retries>
+        <read_timeout><%= full_page_cache.read_timeout %></read_timeout>
+        <automatic_cleaning_factor><%= full_page_cache.automatic_cleaning_factor %></automatic_cleaning_factor>
+        <compress_data><%= full_page_cache.compress_data %></compress_data>
+        <compress_tags><%= full_page_cache.compress_tags %></compress_tags>
+        <compress_threshold><%= full_page_cache.compression_treshold %></compress_threshold>
+        <compression_lib><%= full_page_cache.compress_lib %></compression_lib>
+        <lifetimelimit><%= full_page_cache.lifetimelimit %></lifetimelimit>
+    </backend_options>
+</full_page_cache>

@@ -1,0 +1,19 @@
+<cache>
+    <backend><%= cache.backend %></backend>
+    <backend_options>
+        <server><%= cache.server %></server>
+        <port><%= cache.port %></port>
+        <persistent><%= cache.persistent %></persistent>
+        <database><%= cache.database %></database>
+        <password><%= cache.password %></password>
+        <force_standalone><%= cache.force_standalone %></force_standalone>
+        <connect_retries><%= cache.connect_retries %></connect_retries>
+        <read_timeout><%= cache.read_timeout %></read_timeout>
+        <automatic_cleaning_factor><%= cache.automatic_cleaning_factor %></automatic_cleaning_factor>
+        <compress_data><%= cache.compress_data %></compress_data>
+        <compress_tags><%= cache.compress_tags %></compress_tags>
+        <compress_threshold><%= cache.compress_treshold %></compress_threshold>
+        <compression_lib><%= cache.compress_lib %></compression_lib>
+        <lifetimelimit><%= cache.lifetimelimit %></lifetimelimit>
+    </backend_options>
+</cache>

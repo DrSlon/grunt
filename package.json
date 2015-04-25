@@ -1,0 +1,29 @@
+{
+  "name": "grunt-mage",
+  "description": "Manage Magento project",
+  "version": "0.1.0",
+  "author": {
+    "name": "Qbikz Team",
+    "url": "http://qbikz.com/"
+  },
+  "engines": {
+    "node": ">= 0.8.0"
+  },
+  "devDependencies": {
+    "grunt": "~0.4.0"
+  },
+  "peerDependencies": {
+    "grunt": "~0.4.0"
+  },
+  "keywords": [
+    "gruntplugin"
+  ],
+  "files": [
+    "tasks"
+  ],
+  "maintainers": [{
+      "name"  : "sergey",
+      "email" : "s.yur@qbikz.com"
+  }],
+  "directories": {}
+}

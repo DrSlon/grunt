@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<config>
+    <global>
+        <install>
+            <date><![CDATA[Thu, 01 May 2014 01:00:00 +0000]]></date>
+        </install>
+        <crypt>
+            <key><%= encryption_key %></key>
+        </crypt>
+        <disable_local_modules>false</disable_local_modules>
+        <resources>
+            <db>
+                <table_prefix><%= db.table_prefix %></table_prefix>
+            </db>
+            <default_setup>
+                <connection>
+                    <host><%= db.host %></host>
+                    <username><%= db.username %></username>
+                    <password><%= db.password %></password>
+                    <dbname><%= db.dbname %></dbname>
+                    <initStatements><![CDATA[SET NAMES utf8]]></initStatements>
+                    <model>mysql4</model>
+                    <type>pdo_mysql</type>
+                    <pdoType></pdoType>
+                    <active>1</active>
+                </connection>
+            </default_setup>
+        </resources>
+        <session_save><%= session.save %></session_save>
+        <%= _tmpl.session_save_path %>
+        <%= _tmpl.cache %>
+        <%= _tmpl.full_page_cache %>
+    </global>
+    <admin>
+        <routers>
+            <adminhtml>
+                <args>
+                    <frontName><%= admin.route %></frontName>
+                </args>
+            </adminhtml>
+        </routers>
+    </admin>
+</config>
