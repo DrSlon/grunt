@@ -36,7 +36,8 @@
   ],
   "dependencies": {
     "shelljs" : "~0.4.0",
-    "prettyjson" : "~1.1.0"
+    "prettyjson" : "~1.1.0",
+    "xml2js": "^0.4.8"
   },
   "keywords": [
     "gruntplugin",
