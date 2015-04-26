@@ -420,8 +420,47 @@ module.exports = function($grunt) {
             return this;
         },
 
-        updatePatches : function (files) {
+        updatePatches : function (dir) {
+            // copy $dir to DocRoot
+            var files = $grunt.file.expand(dir + '/*');
             $shell.cp('-Rf', files, this.getDocumentRoot()); // -Rf
+
+            // add $files to .ignore list
+            // get $ignFiles data
+            var fs       = require('fs'),
+                path     = require('path'),
+                ignFiles = [];
+
+            var dirTree = function (filename, files) {
+                var stats = fs.lstatSync(filename),
+                    files = files || [];
+
+                if (stats.isDirectory()) {
+                    fs.readdirSync(filename).map(function(child) {
+                        return dirTree(filename + '/' + child, files);
+                    });
+                } else {
+                    files.push(filename);
+                }
+                return files;
+            }
+
+            dirTree(dir, ignFiles);
+
+            var $this = this;
+            ignFiles.forEach(function(file, i) {
+                ignFiles[i] = file.replace(dir, '').replace(/\\/g,'/');
+            });
+
+            // add $ignFiles to ignore file
+            var ignoreFile = this.getDocumentRoot('.gitignore');
+            var ignoreData = fs.readFileSync(ignoreFile, 'utf8').split(/[\n]/);
+            ignFiles.forEach(function(file, i) {
+                if (!(ignoreData.indexOf(file) >= 0)) {//not found
+                    ignoreData.push(file);
+                }
+            });
+            $grunt.file.write(ignoreFile, ignoreData.join("\n"));
         },
 
         cleanSession : function() {

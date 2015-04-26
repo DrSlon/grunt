@@ -2,8 +2,8 @@
  * grunt-mage
  */
 /**
- * 1. авт. добавить новые файлы после патча в игнор лист
- * 2. авт. добавить файлы после импорта в игнор лист
+ * 1. авт. добавить новые файлы после SH патча в игнор лист
+ * 2. !?! авт. добавить файлы после импорта в игнор лист
  * 3. git ls-files | grep "^public"
  */
 'use strict';
@@ -29,9 +29,10 @@ module.exports = function(grunt, options) {
 
     grunt.registerTask('mage:patches:apply', 'Magento Patch Tools', function() {
         var patches = grunt.config('mage')['_options_']['patches'] || [],
-            files   = grunt.file.expand('data/patches/update/*');
+            dir     = 'data/patches/update';
 
-        mage.applyPatches(patches).updatePatches(files);
+        mage.applyPatches(patches);
+        mage.updatePatches(dir);
     });
 
     grunt.registerTask('mage:git', 'Git Tools', function(cmd) {
