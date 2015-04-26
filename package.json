@@ -3,8 +3,17 @@
   "description": "Manage Magento project",
   "version": "0.1.0",
   "author": {
-    "name": "My Team",
-    "url": "http://mysite.com/"
+    "name": "Sergey Yur",
+    "email" : "sergey.yur@gmail.com",
+    "url": "https://www.linkedin.com/profile/view?id=273332892&trk=hp-identity-photo"
+  },
+  "homepage": "https://github.com/DrSlon/grunt-mage",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/DrSlon/grunt-mage.git"
+  },
+  "bugs": {
+    "url": "https://github.com/DrSlon/grunt-mage/issues"
   },
   "engines": {
     "node": ">= 0.8.0"
@@ -15,8 +24,24 @@
   "peerDependencies": {
     "grunt": "~0.4.0"
   },
+  "main": "./mage.js",
+  "files" : [
+    "tasks/mage.js",
+    "tasks/lib/mage.js",
+    "tasks/lib/command.js",
+    "tasks/data/configs/local.xml",
+    "tasks/data/configs/local/cache.xml",
+    "tasks/data/configs/local/full_page_cache.xml",
+    "tasks/data/configs/local/session_save_path.xml"
+  ],
+  "dependencies": {
+    "shelljs" : "~0.4.0",
+    "prettyjson" : "~1.1.0"
+  },
   "keywords": [
-    "gruntplugin"
+    "gruntplugin",
+    "magento",
+    "mage"
   ],
   "files": [
     "tasks"
