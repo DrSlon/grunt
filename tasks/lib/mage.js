@@ -146,6 +146,10 @@ module.exports = function($grunt) {
             return $path.normalize(path.join('/'));
         },
 
+        getRelativeDocumentRoot : function() {
+            return this.getDocumentRoot().replace(process.cwd(),'').replace(/\\/g,'/').replace(/^\/|\/$/g,'');
+        },
+
         getVendorDir : function() {
             this._loadComposerData();
 
@@ -417,6 +421,29 @@ module.exports = function($grunt) {
                 $grunt.file.delete($this.getDocumentRoot(patch));
             });
 
+            // check & put new files to ignore list
+            var partDocRoot = this.getRelativeDocumentRoot();
+            var cmd = "git status -s -u | grep ^" + partDocRoot;
+            var ret = exec(cmd, false);
+
+            var RegExpQuote = function(str) {
+                return (str+'').replace(/[.?*+^$[\]\\(){}|-]/g, "\\$&");
+            };
+
+            if (ret.code == 0) {
+                var files = [];
+                ret.output.split("\n").forEach(function(line) {
+                    if (line) {
+                        var file = line.split(" ")[1];
+                        var reg = new RegExp("^"+RegExpQuote(partDocRoot), 'g');
+                        file = file.replace(reg, "");
+                        files.push(file);
+                    }
+                });
+
+                this.addDataToGitIgnoreList(files);
+            }
+
             return this;
         },
 
@@ -453,9 +480,14 @@ module.exports = function($grunt) {
             });
 
             // add $ignFiles to ignore file
+            this.addDataToGitIgnoreList(ignFiles);
+        },
+
+        addDataToGitIgnoreList : function(files) {
+            var fs         = require('fs');
             var ignoreFile = this.getDocumentRoot('.gitignore');
             var ignoreData = fs.readFileSync(ignoreFile, 'utf8').split(/[\n]/);
-            ignFiles.forEach(function(file, i) {
+            files.forEach(function(file, i) {
                 if (!(ignoreData.indexOf(file) >= 0)) {//not found
                     ignoreData.push(file);
                 }
