@@ -119,21 +119,21 @@ module.exports = function(grunt, options) {
 
     grunt.registerTask('mage:db:drop', 'Drop DataBase', function() {
         if (mage.dropDb() == 0) {
-            grunt.log.oklns('Database "' + mage.getEnvOption('db.dbname') + '" is removed.');
+            grunt.log.oklns('Database "' + mage.getEnvOption('db.dbname') + '" is removed');
         }
 
         if (mage.deleteLocalXml()) {
-            grunt.log.oklns('"local.xml" is removed.');
+            grunt.log.oklns('"local.xml" is removed');
         }
     });
 
     grunt.registerTask('mage:db:create', 'Create DataBase', function() {
         if (grunt.file.exists(mage.getLocalXmlPath())) {
-            grunt.fail.warn('Unable to create db. Magento is already installed.');//abort
-            //return grunt.log.error('Magento is already installed. Terminating.');
+            grunt.fail.warn('Unable to create db. Magento is already installed');//abort
+            //return grunt.log.errorlns('Magento is already installed. Terminating');
         } else {
             if (mage.createDb() == 0) {
-                grunt.log.oklns('Database "' + mage.getEnvOption('db.dbname') + '" is created.');
+                grunt.log.oklns('Database "' + mage.getEnvOption('db.dbname') + '" is created');
             }
         }
     });
@@ -142,7 +142,7 @@ module.exports = function(grunt, options) {
         mage.deleteLocalXml();
 
         if (mage.setupDb() == 0) {
-            grunt.log.oklns('Generated Magento config.');
+            grunt.log.oklns('Generated Magento config');
             mage.deleteLocalXml();
         }
 
@@ -151,42 +151,49 @@ module.exports = function(grunt, options) {
 
     grunt.registerTask('mage:db:import', 'Import DataBase', function() {
         if (!mage.hasEnvOption('import.data')) {
-            return grunt.log.writelns('Attribute "import.data" is empty. There are not data for import.');
+            return grunt.log.writelns('Attribute "import.data" is empty. There are not any data [sql] for import');
         }
 
-        if (mage.importDb() == 0) {
-            grunt.log.oklns('Import of database "' + mage.getEnvOption('db.dbname') + '" is succesfull.');
+        var file = mage.getEnvOption('import.data');
+        if (grunt.file.exists(file)) {
+            if (mage.importDb(file) == 0) {
+                grunt.log.oklns('Import of database "' + mage.getEnvOption('db.dbname') + '" is succesfull');
+            }
+        } else {
+            grunt.log.errorlns('The import file "' + file + '" is not exists');
         }
     });
 
     grunt.registerTask('mage:files:import', 'Import Files into Document Root', function() {
-        var files = mage.getEnvOption('import.files') || [];
+        var path = mage.getEnvOption('import.content');
 
-        if (files.length == 0) {
-            return grunt.log.writelns('Attribute "import.files" is empty. There are not files for import.');
+        if (!path || !grunt.file.exists(path)) {
+            return grunt.log.errorlns('Attribute "import.content" is not valid');
         }
 
-        if (mage.importFiles(files)) {
-            grunt.log.oklns('Import of files was succesfull.');
+        var files = grunt.file.expand(path + '/*');
+        if (files.length > 0) {
+            mage.importFiles(files)
+            grunt.log.oklns('Import files was succesfull');
         }
     });
 
     grunt.registerTask('mage:config:remove', 'Remove Magento Config [local.xml]', function() {
         var file = mage.getLocalXmlPath();
         if (!grunt.file.exists(file)) {
-            return grunt.log.error('"Local.xml" does not exist.')
+            return grunt.log.errorlns('"Local.xml" does not exist')
         } else if (grunt.file.delete(file)) {
-            return grunt.log.oklns('Succesfully removed "local.xml" file.');
+            return grunt.log.oklns('Succesfully removed "local.xml" file');
         }
-        grunt.log.error('"Local.xml" is not deleted.');
+        grunt.log.errorlns('"Local.xml" is not deleted');
     });
 
     grunt.registerTask('mage:config:regenerate', 'Create Magento Config [local.xml]', function() {
         if (grunt.file.exists(mage.getLocalXmlPath())) {
-            return grunt.fail.warn('Unable to regenerate "local.xml". Magento is already installed.'); //abort
+            return grunt.fail.warn('Unable to regenerate "local.xml". Magento is already installed'); //abort
         }
 
         grunt.file.write(mage.getLocalXmlPath(), mage.getLocalXmlData());
-        grunt.log.oklns('Created new "local.xml" file.');
+        grunt.log.oklns('Created new "local.xml" file');
     });
 };

@@ -314,10 +314,9 @@ module.exports = function($grunt) {
             return exec(cmd).code;
         },
 
-        importDb : function() {
+        importDb : function(file) {
             var cmd  = '',
-                data = this.getEnvOption('db'),
-                file = this.getEnvOption('import.data');
+                data = this.getEnvOption('db');
 
             //mysql command
             var mysql = $grunt.template.process(this._settings_.cmd.db.mysql,{data:data});
@@ -421,7 +420,7 @@ module.exports = function($grunt) {
                 $grunt.file.delete($this.getDocumentRoot(patch));
             });
 
-            // check & put new files to ignore list
+            // check & put the new files to ignore list
             var partDocRoot = this.getRelativeDocumentRoot();
             var cmd = "git status -s -u | grep ^" + partDocRoot;
             var ret = exec(cmd, false);
@@ -434,6 +433,7 @@ module.exports = function($grunt) {
                 var files = [];
                 ret.output.split("\n").forEach(function(line) {
                     if (line) {
+                        line = line.replace(/^\s*|\s*$/,'');
                         var file = line.split(" ")[1];
                         var reg = new RegExp("^"+RegExpQuote(partDocRoot), 'g');
                         file = file.replace(reg, "");
