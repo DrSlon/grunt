@@ -3,7 +3,8 @@
  */
 /**
  * 1. !?! авт. добавить файлы после импорта в игнор лист
- * 2. git ls-files | grep "^public"
+ * 2. нужен test для git ls-files | grep "^public"
+ * 3. маженто пост-конфиг
  */
 'use strict';
 
