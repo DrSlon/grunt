@@ -375,7 +375,11 @@ module.exports = function($grunt) {
                 });
 
                 for (var i=0; i<cache.length; i++) {
-                    var cacheNode = data['config']['global'][0][cache[i]][0];
+                    try {
+                        var cacheNode = data['config']['global'][0][cache[i]][0];
+                    } catch (e) {
+                        return $grunt.log.oklns("No any cache config");
+                    }
                     if (cacheNode['backend'][0].match(/redis/ig)) {
                         var host = cacheNode['backend_options'][0]['server'][0],
                             port = cacheNode['backend_options'][0]['port'][0],

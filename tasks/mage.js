@@ -11,6 +11,13 @@
 module.exports = function(grunt, options) {
     var mage = require('./lib/mage')(grunt);
 
+    function getN98Config() {
+        var cnf = grunt.config('mage')['n98magerun'];
+        cnf['flags'].push(grunt.template.process("root-dir=\"<%= docroot %>\"",{data: {docroot:mage.getDocumentRoot()}}));
+
+        return cnf;
+    }
+
     grunt.registerTask('mage:composer', 'Composer manager', function(cmd) {
         //TODO: use slice of array
         var flags = [];
@@ -29,7 +36,7 @@ module.exports = function(grunt, options) {
 
     grunt.registerTask('mage:patches:apply', 'Magento Patch Tools', function() {
         var patches = grunt.config('mage')['_options_']['patches'] || [],
-            dir     = 'data/patches/update';
+            dir     = 'data/patches/content';
 
         mage.applyPatches(patches);
         mage.updatePatches(dir);
@@ -45,9 +52,7 @@ module.exports = function(grunt, options) {
             flags.push(arguments[i]);
         }
 
-        var cnf = grunt.config('mage')['n98magerun'];
-        cnf['flags'].push(grunt.template.process("root-dir=\"<%= docroot %>\"",{data: {docroot:mage.getDocumentRoot()}}));
-
+        var cnf = getN98Config();
         mage.run(cnf, ('cache:'+cmd), flags);
     });
 
@@ -139,7 +144,7 @@ module.exports = function(grunt, options) {
         }
     });
 
-    grunt.registerTask('mage:config:setup', 'Setup DataBase', function() {
+    grunt.registerTask('mage:config-xml:setup', 'Setup DataBase', function() {
         mage.deleteLocalXml();
 
         if (mage.setupDb() == 0) {
@@ -147,7 +152,7 @@ module.exports = function(grunt, options) {
             mage.deleteLocalXml();
         }
 
-        grunt.task.run('mage:config:regenerate');
+        grunt.task.run('mage:config-xml:regenerate');
     });
 
     grunt.registerTask('mage:db:import', 'Import DataBase', function() {
@@ -179,7 +184,7 @@ module.exports = function(grunt, options) {
         }
     });
 
-    grunt.registerTask('mage:config:remove', 'Remove Magento Config [local.xml]', function() {
+    grunt.registerTask('mage:config-xml:remove', 'Remove Magento Config [local.xml]', function() {
         var file = mage.getLocalXmlPath();
         if (!grunt.file.exists(file)) {
             return grunt.log.errorlns('"Local.xml" does not exist')
@@ -189,12 +194,33 @@ module.exports = function(grunt, options) {
         grunt.log.errorlns('"Local.xml" is not deleted');
     });
 
-    grunt.registerTask('mage:config:regenerate', 'Create Magento Config [local.xml]', function() {
+    grunt.registerTask('mage:config-xml:regenerate', 'Create Magento Config [local.xml]', function() {
         if (grunt.file.exists(mage.getLocalXmlPath())) {
             return grunt.fail.warn('Unable to regenerate "local.xml". Magento is already installed'); //abort
         }
 
         grunt.file.write(mage.getLocalXmlPath(), mage.getLocalXmlData());
         grunt.log.oklns('Created new "local.xml" file');
+    });
+
+    grunt.registerTask('mage:system', 'Post Setup Magento System Configuration', function(cmd) {
+        //cmd is "init-setup" or "post-setup"
+        var system = mage.getEnvOption('magento.'+cmd + '-system') || {};
+
+        var sys = {};
+        for(var k1 in system) {
+            for (var k2 in system[k1]) {
+                for (var k3 in system[k1][k2]) {
+                    var path = k1 + '/' + k2 + '/' + k3;
+                    sys[path] = system[k1][k2][k3];
+                }
+            }
+        }
+
+        var n98Cnf = getN98Config();
+        for (var path in sys) {
+            var cmd = 'config:set ' + path + ' ' + sys[path];
+            mage.run(n98Cnf, cmd, []);
+        };
     });
 };
