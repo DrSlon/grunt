@@ -426,7 +426,7 @@ module.exports = function($grunt) {
 
             // check & put the new files to ignore list
             var partDocRoot = this.getRelativeDocumentRoot();
-            var cmd = "git status -s -u | grep ^" + partDocRoot;
+            var cmd = "git status -s -u | grep '^.. " + partDocRoot + "'";
             var ret = exec(cmd, false);
 
             var RegExpQuote = function(str) {
