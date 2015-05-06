@@ -222,4 +222,25 @@ module.exports = function(grunt, options) {
             mage.run(n98Cnf, cmd, []);
         };
     });
+
+    grunt.registerTask('mage:test:pull', 'Pull Magento code for test', function() {
+        var partDocRoot = mage.getRelativeDocumentRoot();
+        var resp = mage.exec("git ls-files | grep '^"+partDocRoot+"'");
+        var data = resp.output.split("\n");
+        var dir = grunt.config('mage')['_options_']['temp-folder'] || "./temp";
+        dir = dir + '/git-files';
+
+        var RegExpQuote = function(str) {
+            return (str+'').replace(/[.?*+^$[\]\\(){}|-]/g, "\\$&");
+        };
+
+        var reg = new RegExp("^"+RegExpQuote(partDocRoot)+"/", 'g');
+        data.forEach(function(srcpath){
+            if (srcpath) {
+                var destpath = srcpath.replace(reg,"");
+                grunt.file.copy(srcpath, dir + "/" + destpath);
+            }
+        });
+        grunt.log.oklns('Files copied [' + data.length + '] in "' + dir + '" folder');
+    });
 };

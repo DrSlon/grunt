@@ -4,12 +4,7 @@
  * Module dependencies.
  */
 var $shell = require('shelljs');
-var $prettyjson = require('prettyjson');
-var $path = require('path');
-
-function printjs(data, cnf) {
-    console.log($prettyjson.render(data, cnf));
-}
+var $path  = require('path');
 
 module.exports = function($grunt) {
 
