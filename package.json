@@ -1,7 +1,7 @@
 {
   "name": "grunt-mage",
   "description": "Manage Magento project",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "author": {
     "name": "Sergey Yur",
     "email" : "sergey.yur@gmail.com",

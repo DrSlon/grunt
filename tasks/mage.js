@@ -223,7 +223,7 @@ module.exports = function(grunt, options) {
         };
     });
 
-    grunt.registerTask('mage:test:pull', 'Pull Magento code for test', function() {
+    grunt.registerTask('mage:clone:pull', 'Pull Magento code for test', function() {
         var partDocRoot = mage.getRelativeDocumentRoot();
         var resp = mage.exec("git ls-files | grep '^"+partDocRoot+"'");
         var data = resp.output.split("\n");
