@@ -1,10 +1,7 @@
 /**
  * grunt-mage
  */
-/**
- * 1. !?! авт. добавить файлы после импорта в игнор лист
- * 2. нужен test для git ls-files | grep "^public"
- */
+
 'use strict';
 
 module.exports = function(grunt, options) {
@@ -55,7 +52,7 @@ module.exports = function(grunt, options) {
         mage.run(cnf, ('cache:'+cmd), flags);
     });
 
-    grunt.registerTask('mage:session-folder:clean', 'Magento Redis Cli Tools', function() {
+    grunt.registerTask('mage:session:clean', 'Magento Redis Cli Tools', function() {
         if (mage.cleanSession()) {
             grunt.log.oklns('Session is cleaned');
         } else {
@@ -65,71 +62,6 @@ module.exports = function(grunt, options) {
 
     grunt.registerTask('mage:redis:flush', 'Magento Redis Cli Tools', function() {
         mage.flushRedis();
-    });
-
-    grunt.registerTask('mage:drop', 'Drop Magento folder', function() {
-        var dir = mage.getDocumentRoot();
-        if (process.cwd().replace(/[\\\/]+$/ig, '') == dir.replace(/[\\\/]+$/ig, '')) {
-            grunt.fail.warn('I cann\'t delete "root" directory of project');
-        }
-        if (grunt.file.exists(dir)) {
-            if (grunt.file.delete(dir)) {
-                grunt.file.mkdir(dir);
-                grunt.log.oklns('Cleaned Magento directory "' + dir + '"');
-            } else {
-                grunt.log.errorlns('Cann\'t remove Magento directory ["' + dir + '"]');
-            }
-        } else {
-			grunt.file.mkdir(dir);
-		}
-
-        var dir = mage.getVendorDir();
-        if (process.cwd().replace(/[\\\/]+$/ig, '') == dir.replace(/[\\\/]+$/ig, '')) {
-            grunt.fail.warn('I cann\'t delete "vendor" directory of project');
-        }
-        if (grunt.file.exists(dir)) {
-            if (grunt.file.delete(dir)) {
-                grunt.log.oklns('Dropped vendor directory ["' + dir + '"]');
-            } else {
-                grunt.log.errorlns('Cann\'t remove vendor directory ["' + dir + '"]');
-            }
-        }
-
-        var dir = mage.getVendorBinDir();
-        if (process.cwd().replace(/[\\\/]+$/ig, '') == dir.replace(/[\\\/]+$/ig, '')) {
-            grunt.fail.warn('I cann\'t delete "vendor-bin" directory of project');
-        }
-        if (grunt.file.exists(dir)) {
-            if (grunt.file.delete(dir)) {
-                grunt.log.oklns('Dropped vendor-bin directory ["' + dir + '"');
-            } else {
-                grunt.log.errorlns('Cann\'t remove vendor-bin directory ["' + dir + '"]');
-            }
-        }
-
-        var dir = mage.getComposerLockPath();
-        if (process.cwd().replace(/[\\\/]+$/ig, '') == dir.replace(/[\\\/]+$/ig, '')) {
-            grunt.fail.warn('I cann\'t delete "composer.lock" file');
-        }
-        if (grunt.file.exists(dir)) {
-            if (grunt.file.delete(dir)) {
-                grunt.log.oklns('Dropped "composer.lock" file ["' + dir + '"]');
-            } else {
-                grunt.log.errorlns('Cann\'t remove "composer.lock" file ["' + dir + '"]');
-            }
-        }
-
-        grunt.task.run('mage:db:drop');
-    });
-
-    grunt.registerTask('mage:db:drop', 'Drop DataBase', function() {
-        if (mage.dropDb() == 0) {
-            grunt.log.oklns('Database "' + mage.getEnvOption('db.dbname') + '" is removed');
-        }
-
-        if (mage.deleteLocalXml()) {
-            grunt.log.oklns('"local.xml" is removed');
-        }
     });
 
     grunt.registerTask('mage:db:create', 'Create DataBase', function() {
@@ -143,15 +75,23 @@ module.exports = function(grunt, options) {
         }
     });
 
-    grunt.registerTask('mage:config-xml:setup', 'Setup DataBase', function() {
-        mage.deleteLocalXml();
-
-        if (mage.setupDb() == 0) {
-            grunt.log.oklns('Generated Magento config');
-            mage.deleteLocalXml();
+    grunt.registerTask('mage:db:drop', 'Drop DataBase', function() {
+        if (mage.dropDb() == 0) {
+            grunt.log.oklns('Database "' + mage.getEnvOption('db.dbname') + '" is removed');
         }
 
-        grunt.task.run('mage:config-xml:regenerate');
+        if (mage.deleteLocalXml()) {
+            grunt.log.oklns('"local.xml" is removed');
+        }
+    });
+
+    grunt.registerTask('mage:db:dump', 'Create DataBase', function() {
+        var file = mage.dumpDb();
+        if (file) {
+            grunt.log.oklns('Database DUMP succesfully exported to: '+file);
+        } else {
+            grunt.log.errorlns('Database DUMP is unsuccesful');
+        }
     });
 
     grunt.registerTask('mage:db:import', 'Import DataBase', function() {
@@ -169,7 +109,18 @@ module.exports = function(grunt, options) {
         }
     });
 
-    grunt.registerTask('mage:files:import', 'Import Files into Document Root', function() {
+    grunt.registerTask('mage:config-xml:setup', 'Setup DataBase', function() {
+        mage.deleteLocalXml();
+
+        if (mage.setupDb() == 0) {
+            grunt.log.oklns('Generated Magento config');
+            mage.deleteLocalXml();
+        }
+
+        grunt.task.run('mage:config-xml:regenerate');
+    });
+
+    grunt.registerTask('mage:content:import', 'Import Files into Document Root', function() {
         var path = mage.getEnvOption('import.content');
 
         if (!path || !grunt.file.exists(path)) {
@@ -190,7 +141,7 @@ module.exports = function(grunt, options) {
         } else if (grunt.file.delete(file)) {
             return grunt.log.oklns('Succesfully removed "local.xml" file');
         }
-        grunt.log.errorlns('"Local.xml" is not deleted');
+        grunt.fail.warn('"Local.xml" is not deleted');
     });
 
     grunt.registerTask('mage:config-xml:regenerate', 'Create Magento Config [local.xml]', function() {

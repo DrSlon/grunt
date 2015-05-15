@@ -1,7 +1,7 @@
 'use strict';
 
 /**
- * Module dependencies.
+ * Module dependencies
  */
 var $shell = require('shelljs');
 var $path  = require('path');
@@ -54,7 +54,7 @@ module.exports = function($grunt) {
                     drop    : 'mysql -h<%= host %> -u<%= username %> -p<%= password %> -e "DROP DATABASE IF EXISTS <%= dbname %>"',
                     create  : 'mysql -h<%= host %> -u<%= username %> -p<%= password %> -e "CREATE DATABASE IF NOT EXISTS <%= dbname %> CHARACTER SET utf8 COLLATE utf8_unicode_ci"',
                     import  : '<%= mysql %> < <%= process.cwd() %>/<%= file %>',
-                    backup  : 'mysqldump -u <%= user %> -p<%= pass %> -h<%= host %> <%= name %> | gzip -c > <%= path %>',
+                    backup  : 'mysqldump -h<%= host %> -u<%= username %> -p<%= password %> <%= dbname %> | gzip -c > <%= path %>',
 
                     archdata : '<%= arch.name %> <%= arch.opts %> <%= arch.file %> | <%= mysql %>',
 
@@ -296,6 +296,32 @@ module.exports = function($grunt) {
             return exec(cmd).code;
         },
 
+        dumpDb : function() {
+            if (! $shell.which('mysqldump')) {
+                grunt.fail.warn('Sorry, this script requires the "mysqldump" binary');
+            }
+
+            if (! $shell.which('gzip')) {
+                grunt.fail.warn('Sorry, this script requires the "gzip" binary');
+            }
+
+            var data = this.getEnvOption('db');
+
+            data['path'] = 'data/backups/'
+                + this.getEnvOption('db.dbname')
+                + '_' + this.grunt.template.today('yyyymmdd')
+                + '-' + this.grunt.template.today('HHMMss')+'.sql.zip';
+
+            var mysqldump = this.grunt.template.process(this._settings_.cmd.db.backup, {data : data});
+
+            if (!this.getEnvOption('db.password')) {
+                mysqldump = mysqldump.replace(/\s\-p/g, '');
+            }
+            if (exec(mysqldump).code == 0) {
+                return data['path'];
+            }
+        },
+
         setupDb : function() {
             var data = this.getEnvOption('magento');
             data     = require('util')._extend(data, {rootdir : this.getDocumentRoot(), db : this.getEnvOption('db')});
@@ -496,6 +522,7 @@ module.exports = function($grunt) {
 
         cleanSession : function() {
             var path = this.getDocumentRoot('var/session/*');
+
             $grunt.file.expand(path).forEach(function(file){
                 $grunt.file.delete(file);
             });

@@ -1,10 +1,10 @@
 {
   "name": "grunt-mage",
   "description": "Manage Magento project",
-  "version": "0.1.5",
+  "version": "0.1.7",
   "author": {
     "name": "Sergey Yur",
-    "email" : "sergey.yur@gmail.com",
+    "email": "sergey.yur@gmail.com",
     "url": "https://www.linkedin.com/profile/view?id=273332892&trk=hp-identity-photo"
   },
   "homepage": "https://github.com/DrSlon/grunt-mage",
@@ -25,17 +25,11 @@
     "grunt": "~0.4.0"
   },
   "main": "./mage.js",
-  "files" : [
-    "tasks/mage.js",
-    "tasks/lib/mage.js",
-    "tasks/lib/command.js",
-    "tasks/data/configs/local.xml",
-    "tasks/data/configs/local/cache.xml",
-    "tasks/data/configs/local/full_page_cache.xml",
-    "tasks/data/configs/local/session_save_path.xml"
+  "files": [
+    "tasks"
   ],
   "dependencies": {
-    "shelljs" : "~0.4.0",
+    "shelljs": "~0.4.0",
     "xml2js": "^0.4.8"
   },
   "keywords": [
@@ -43,12 +37,17 @@
     "magento",
     "mage"
   ],
-  "files": [
-    "tasks"
+  "maintainers": [
+    {
+      "name": "sergey",
+      "email": "sergey.yur@gmail.com"
+    }
   ],
-  "maintainers": [{
-      "name"  : "sergey",
-      "email" : "sergey.yur@gmail.com"
-  }],
-  "directories": {}
+  "directories": {},
+  "gitHead": "bdedd2139c7dca7cb85961e4c152161ccbc1b964",
+  "readme": "ERROR: No README data found!",
+  "_id": "grunt-mage@0.1.6",
+  "scripts": {},
+  "_shasum": "c1ca9b01ca6cdb3ddedc696410ca1a95c678a180",
+  "_from": "grunt-mage@*"
 }
